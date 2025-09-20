@@ -1,0 +1,626 @@
+{
+  "schemaVersion": "0.1.0",
+  "name": "design-patterns-mcp-server",
+  "version": "0.1.0",
+  "description": "MCP server providing intelligent design pattern recommendations for software development",
+  "author": "Design Patterns MCP Team",
+  "license": "MIT",
+  "homepage": "https://github.com/user/design-patterns-mcp-server",
+  "capabilities": {
+    "tools": {
+      "suggest_pattern": {
+        "description": "Analyze a development problem and suggest appropriate design patterns",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "Natural language description of the problem or requirement",
+              "minLength": 10,
+              "maxLength": 2000
+            },
+            "code_context": {
+              "type": "string",
+              "description": "Optional relevant source code for context analysis",
+              "maxLength": 50000
+            },
+            "programming_language": {
+              "type": "string",
+              "description": "Target programming language preference",
+              "enum": ["typescript", "javascript", "python", "java", "csharp", "go", "rust"]
+            },
+            "complexity_preference": {
+              "type": "string",
+              "description": "Preferred complexity level of recommended patterns",
+              "enum": ["simple", "any", "advanced"],
+              "default": "any"
+            },
+            "category_filter": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["Creational", "Structural", "Behavioral", "Enterprise", "Concurrency"]
+              },
+              "description": "Restrict recommendations to specific pattern categories"
+            },
+            "max_results": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20,
+              "default": 5,
+              "description": "Maximum number of pattern recommendations to return"
+            },
+            "include_examples": {
+              "type": "boolean",
+              "default": true,
+              "description": "Include code examples in the response"
+            },
+            "llm_enhance": {
+              "type": "boolean",
+              "default": false,
+              "description": "Use LLM to enhance recommendations (if available)"
+            }
+          },
+          "required": ["query"]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "request_id": {
+              "type": "string",
+              "description": "Unique identifier for this recommendation request"
+            },
+            "recommendations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pattern": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "integer" },
+                      "name": { "type": "string" },
+                      "category": { "type": "string" },
+                      "description": { "type": "string" },
+                      "complexity": { "type": "string" }
+                    },
+                    "required": ["id", "name", "category", "description"]
+                  },
+                  "score": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "Relevance score for this recommendation"
+                  },
+                  "rank": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "Position in ranking (1 = most relevant)"
+                  },
+                  "justification": {
+                    "type": "string",
+                    "description": "Explanation of why this pattern was recommended"
+                  },
+                  "implementation": {
+                    "type": "object",
+                    "properties": {
+                      "language": { "type": "string" },
+                      "code": { "type": "string" },
+                      "explanation": { "type": "string" },
+                      "best_practices": { "type": "string" }
+                    },
+                    "description": "Language-specific implementation details (if include_examples=true)"
+                  },
+                  "llm_insights": {
+                    "type": "string",
+                    "description": "Additional LLM-generated insights (if llm_enhance=true)"
+                  }
+                },
+                "required": ["pattern", "score", "rank", "justification"]
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "processing_time_ms": { "type": "number" },
+                "total_patterns_searched": { "type": "integer" },
+                "semantic_search_enabled": { "type": "boolean" },
+                "llm_enhanced": { "type": "boolean" },
+                "query_processed": { "type": "string" }
+              }
+            }
+          },
+          "required": ["request_id", "recommendations", "metadata"]
+        }
+      },
+      "search_patterns": {
+        "description": "Search the pattern database using keywords or semantic similarity",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "Search query (keywords or natural language)",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            "search_type": {
+              "type": "string",
+              "enum": ["keyword", "semantic", "hybrid"],
+              "default": "hybrid",
+              "description": "Type of search to perform"
+            },
+            "category_filter": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["Creational", "Structural", "Behavioral", "Enterprise", "Concurrency"]
+              }
+            },
+            "complexity_filter": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["Low", "Medium", "High"]
+              }
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 10
+            }
+          },
+          "required": ["query"]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "patterns": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "integer" },
+                  "name": { "type": "string" },
+                  "category": { "type": "string" },
+                  "description": { "type": "string" },
+                  "complexity": { "type": "string" },
+                  "score": { "type": "number", "minimum": 0, "maximum": 1 },
+                  "match_type": { "type": "string", "enum": ["exact", "keyword", "semantic"] }
+                },
+                "required": ["id", "name", "category", "description", "score"]
+              }
+            },
+            "total_results": { "type": "integer" },
+            "search_metadata": {
+              "type": "object",
+              "properties": {
+                "search_type_used": { "type": "string" },
+                "processing_time_ms": { "type": "number" },
+                "filters_applied": { "type": "object" }
+              }
+            }
+          },
+          "required": ["patterns", "total_results"]
+        }
+      },
+      "analyze_code": {
+        "description": "Analyze provided code to identify existing patterns and suggest improvements",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "description": "Source code to analyze",
+              "minLength": 50,
+              "maxLength": 100000
+            },
+            "language": {
+              "type": "string",
+              "description": "Programming language of the code",
+              "enum": ["typescript", "javascript", "python", "java", "csharp", "go", "rust"]
+            },
+            "analysis_type": {
+              "type": "string",
+              "enum": ["identify_patterns", "suggest_improvements", "full_analysis"],
+              "default": "full_analysis",
+              "description": "Type of analysis to perform"
+            },
+            "focus_areas": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["architecture", "coupling", "cohesion", "extensibility", "maintainability"]
+              },
+              "description": "Specific areas to focus analysis on"
+            }
+          },
+          "required": ["code", "language"]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "identified_patterns": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pattern_name": { "type": "string" },
+                  "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+                  "location": { "type": "string" },
+                  "evidence": { "type": "string" }
+                }
+              }
+            },
+            "suggested_patterns": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pattern_name": { "type": "string" },
+                  "reason": { "type": "string" },
+                  "benefit": { "type": "string" },
+                  "implementation_hint": { "type": "string" }
+                }
+              }
+            },
+            "architecture_insights": {
+              "type": "object",
+              "properties": {
+                "coupling_level": { "type": "string", "enum": ["low", "medium", "high"] },
+                "cohesion_level": { "type": "string", "enum": ["low", "medium", "high"] },
+                "complexity_score": { "type": "number", "minimum": 0, "maximum": 10 },
+                "maintainability_issues": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          },
+          "required": ["identified_patterns", "suggested_patterns"]
+        }
+      },
+      "update_pattern": {
+        "description": "Add or update a pattern definition in the database",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "pattern_id": {
+              "type": "integer",
+              "description": "Pattern ID to update (omit for new pattern)"
+            },
+            "name": {
+              "type": "string",
+              "description": "Pattern name",
+              "minLength": 3,
+              "maxLength": 100
+            },
+            "category": {
+              "type": "string",
+              "enum": ["Creational", "Structural", "Behavioral", "Enterprise", "Concurrency"]
+            },
+            "description": {
+              "type": "string",
+              "description": "Comprehensive pattern description",
+              "minLength": 50,
+              "maxLength": 5000
+            },
+            "problem": {
+              "type": "string",
+              "description": "Problem this pattern solves",
+              "minLength": 20,
+              "maxLength": 2000
+            },
+            "solution": {
+              "type": "string",
+              "description": "How the pattern addresses the problem",
+              "minLength": 20,
+              "maxLength": 2000
+            },
+            "consequences": {
+              "type": "string",
+              "description": "Trade-offs and considerations",
+              "maxLength": 2000
+            },
+            "use_cases": {
+              "type": "string",
+              "description": "Common scenarios where pattern applies",
+              "minLength": 20,
+              "maxLength": 2000
+            },
+            "complexity": {
+              "type": "string",
+              "enum": ["Low", "Medium", "High"]
+            },
+            "implementations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "language": { "type": "string" },
+                  "code": { "type": "string" },
+                  "explanation": { "type": "string" },
+                  "best_practices": { "type": "string" }
+                },
+                "required": ["language", "code", "explanation"]
+              }
+            }
+          },
+          "required": ["name", "category", "description", "problem", "solution", "complexity"]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "pattern_id": { "type": "integer" },
+            "operation": { "type": "string", "enum": ["created", "updated"] },
+            "success": { "type": "boolean" },
+            "message": { "type": "string" }
+          },
+          "required": ["pattern_id", "operation", "success"]
+        }
+      },
+      "get_config": {
+        "description": "Get current server configuration and preferences",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "category": {
+              "type": "string",
+              "enum": ["search", "display", "llm", "performance", "all"],
+              "default": "all",
+              "description": "Configuration category to retrieve"
+            }
+          }
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "configuration": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "defaults": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "required": ["configuration"]
+        }
+      },
+      "set_config": {
+        "description": "Update server configuration and preferences",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "settings": {
+              "type": "object",
+              "additionalProperties": true,
+              "description": "Configuration settings to update"
+            },
+            "category": {
+              "type": "string",
+              "enum": ["search", "display", "llm", "performance"],
+              "description": "Configuration category"
+            }
+          },
+          "required": ["settings"]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "updated_settings": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "success": { "type": "boolean" },
+            "message": { "type": "string" }
+          },
+          "required": ["success"]
+        }
+      }
+    },
+    "resources": {
+      "patterns": {
+        "description": "List all available design patterns",
+        "mimeType": "application/json",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "integer" },
+              "name": { "type": "string" },
+              "category": { "type": "string" },
+              "description": { "type": "string" },
+              "complexity": { "type": "string" },
+              "popularity": { "type": "number" }
+            },
+            "required": ["id", "name", "category", "description", "complexity"]
+          }
+        }
+      },
+      "pattern/{id}": {
+        "description": "Get detailed information about a specific pattern",
+        "mimeType": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "integer" },
+            "name": { "type": "string" },
+            "category": { "type": "string" },
+            "description": { "type": "string" },
+            "problem": { "type": "string" },
+            "solution": { "type": "string" },
+            "consequences": { "type": "string" },
+            "use_cases": { "type": "string" },
+            "complexity": { "type": "string" },
+            "popularity": { "type": "number" },
+            "implementations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "language": { "type": "string" },
+                  "code": { "type": "string" },
+                  "explanation": { "type": "string" },
+                  "best_practices": { "type": "string" },
+                  "frameworks": { "type": "array", "items": { "type": "string" } }
+                }
+              }
+            },
+            "related_patterns": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "integer" },
+                  "name": { "type": "string" },
+                  "relationship": { "type": "string" }
+                }
+              }
+            }
+          },
+          "required": ["id", "name", "category", "description", "problem", "solution"]
+        }
+      },
+      "categories": {
+        "description": "List all pattern categories with counts",
+        "mimeType": "application/json",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "category": { "type": "string" },
+              "description": { "type": "string" },
+              "pattern_count": { "type": "integer" },
+              "complexity_distribution": {
+                "type": "object",
+                "properties": {
+                  "Low": { "type": "integer" },
+                  "Medium": { "type": "integer" },
+                  "High": { "type": "integer" }
+                }
+              }
+            },
+            "required": ["category", "pattern_count"]
+          }
+        }
+      },
+      "languages": {
+        "description": "List supported programming languages with implementation counts",
+        "mimeType": "application/json",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "language": { "type": "string" },
+              "display_name": { "type": "string" },
+              "implementation_count": { "type": "integer" },
+              "supported_features": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            },
+            "required": ["language", "display_name", "implementation_count"]
+          }
+        }
+      },
+      "server_info": {
+        "description": "Get server status and configuration information",
+        "mimeType": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "server_version": { "type": "string" },
+            "mcp_protocol_version": { "type": "string" },
+            "database_type": { "type": "string" },
+            "total_patterns": { "type": "integer" },
+            "supported_languages": { "type": "array", "items": { "type": "string" } },
+            "semantic_search_enabled": { "type": "boolean" },
+            "llm_providers": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "available": { "type": "boolean" },
+                  "configured": { "type": "boolean" }
+                }
+              }
+            },
+            "performance_stats": {
+              "type": "object",
+              "properties": {
+                "avg_response_time_ms": { "type": "number" },
+                "cache_hit_rate": { "type": "number" },
+                "total_requests": { "type": "integer" }
+              }
+            }
+          },
+          "required": ["server_version", "total_patterns", "semantic_search_enabled"]
+        }
+      }
+    },
+    "prompts": {
+      "pattern_recommendation_workflow": {
+        "description": "Guided workflow for pattern recommendation",
+        "parameters": [
+          {
+            "name": "problem_description",
+            "description": "Describe the development problem or requirement",
+            "required": true
+          },
+          {
+            "name": "existing_code",
+            "description": "Any existing code that should be considered",
+            "required": false
+          },
+          {
+            "name": "constraints",
+            "description": "Any constraints or preferences (language, complexity, etc.)",
+            "required": false
+          }
+        ]
+      },
+      "code_review_patterns": {
+        "description": "Template for pattern-focused code review",
+        "parameters": [
+          {
+            "name": "code_to_review",
+            "description": "Source code to review for pattern usage",
+            "required": true
+          },
+          {
+            "name": "review_focus",
+            "description": "Specific aspects to focus on (architecture, maintainability, etc.)",
+            "required": false
+          }
+        ]
+      }
+    }
+  },
+  "runtime": {
+    "node": ">=18.0.0",
+    "memory_limit": "100MB",
+    "timeout": "30s"
+  },
+  "configuration": {
+    "database": {
+      "type": "sqlite",
+      "file": "patterns.db",
+      "migrations": true
+    },
+    "search": {
+      "semantic_enabled": true,
+      "hybrid_weights": {
+        "semantic": 0.6,
+        "keyword": 0.4
+      }
+    },
+    "llm": {
+      "providers": ["ollama", "openai", "anthropic"],
+      "default_provider": "none",
+      "enhance_by_default": false
+    }
+  }
+}
