@@ -110,8 +110,13 @@ class DesignPatternsMCPServer {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
 
-    // Resolve path relative to project root (go up two levels from dist/src/)
-    const projectRoot = path.resolve(__dirname, '..', '..');
+    // Resolve path relative to project root 
+    // When running from src/, no need to go up
+    // When running from dist/src/, go up two levels
+    const isCompiled = __dirname.includes('dist');
+    const projectRoot = isCompiled 
+      ? path.resolve(__dirname, '..', '..')
+      : path.resolve(__dirname, '..');
     const patternsPath = path.join(projectRoot, 'data', 'patterns');
 
     this.migrationManager = new MigrationManager(this.db);
@@ -581,8 +586,20 @@ export function createDesignPatternsServer(config: MCPServerConfig): DesignPatte
 
 // Main execution when run directly
 async function main(): Promise<void> {
+  // Get the directory of the current module
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  
+  // Resolve path relative to project root 
+  const isCompiled = __dirname.includes('dist');
+  const projectRoot = isCompiled 
+    ? path.resolve(__dirname, '..', '..')
+    : path.resolve(__dirname, '..');
+  
+  const defaultDbPath = path.join(projectRoot, 'data', 'design-patterns.db');
+  
   const config: MCPServerConfig = {
-    databasePath: process.env.DATABASE_PATH || './data/design-patterns.db',
+    databasePath: process.env.DATABASE_PATH || defaultDbPath,
     logLevel: (process.env.LOG_LEVEL as any) || 'info',
     enableLLM: process.env.ENABLE_LLM === 'true',
     maxConcurrentRequests: parseInt(process.env.MAX_CONCURRENT_REQUESTS || '10'),
