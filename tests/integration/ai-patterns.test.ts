@@ -17,7 +17,7 @@ describe('AI/ML Patterns', () => {
 
     // Seed patterns for testing
     const seeder = createPatternSeeder(dbManager, {
-      patternsPath: path.resolve(__dirname, '../../src/data/patterns'),
+      patternsPath: path.resolve(__dirname, '../../data/patterns'),
       batchSize: 10,
       skipExisting: false,
     });

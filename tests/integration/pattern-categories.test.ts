@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { DatabaseManager } from '../../src/services/database-manager';
 import { createPatternSeeder } from '../../src/services/pattern-seeder';
+import path from 'path';
 
 describe('Pattern Category Filtering', () => {
   let dbManager: DatabaseManager;
@@ -16,7 +17,7 @@ describe('Pattern Category Filtering', () => {
 
     // Seed patterns for testing
     const seeder = createPatternSeeder(dbManager, {
-      patternsPath: './src/data/patterns',
+      patternsPath: path.resolve(__dirname, '../../data/patterns'),
       batchSize: 10,
       skipExisting: false,
     });

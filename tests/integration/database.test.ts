@@ -59,6 +59,7 @@ describe('Database Operations', () => {
         name TEXT NOT NULL,
         category TEXT NOT NULL,
         description TEXT NOT NULL,
+        complexity TEXT NOT NULL,
         tags TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
@@ -66,8 +67,8 @@ describe('Database Operations', () => {
 
     // Insert test pattern
     const insertSQL = `
-      INSERT OR REPLACE INTO patterns (id, name, category, description, tags)
-      VALUES (?, ?, ?, ?, ?)
+      INSERT OR REPLACE INTO patterns (id, name, category, description, complexity, tags)
+      VALUES (?, ?, ?, ?, ?, ?)
     `;
 
     const result = dbManager.execute(insertSQL, [
@@ -75,6 +76,7 @@ describe('Database Operations', () => {
       'Test Pattern',
       'Creational',
       'A test pattern for database integration testing',
+      'Low',
       'test,pattern,database',
     ]);
 
@@ -94,6 +96,7 @@ describe('Database Operations', () => {
         name TEXT NOT NULL,
         category TEXT NOT NULL,
         description TEXT NOT NULL,
+        complexity TEXT NOT NULL,
         tags TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
@@ -101,15 +104,15 @@ describe('Database Operations', () => {
 
     // Insert multiple test patterns
     const testPatterns = [
-      ['pattern_1', 'Singleton', 'Creational', 'Singleton pattern'],
-      ['pattern_2', 'Factory', 'Creational', 'Factory pattern'],
-      ['pattern_3', 'Observer', 'Behavioral', 'Observer pattern'],
+      ['pattern_1', 'Singleton', 'Creational', 'Singleton pattern', 'Low'],
+      ['pattern_2', 'Factory', 'Creational', 'Factory pattern', 'Medium'],
+      ['pattern_3', 'Observer', 'Behavioral', 'Observer pattern', 'Medium'],
     ];
 
-    testPatterns.forEach(([id, name, category, description]) => {
+    testPatterns.forEach(([id, name, category, description, complexity]) => {
       dbManager.execute(
-        'INSERT OR REPLACE INTO patterns (id, name, category, description) VALUES (?, ?, ?, ?)',
-        [id, name, category, description]
+        'INSERT OR REPLACE INTO patterns (id, name, category, description, complexity) VALUES (?, ?, ?, ?, ?)',
+        [id, name, category, description, complexity]
       );
     });
 
@@ -130,6 +133,7 @@ describe('Database Operations', () => {
         name TEXT NOT NULL,
         category TEXT NOT NULL,
         description TEXT NOT NULL,
+        complexity TEXT NOT NULL,
         tags TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
@@ -142,13 +146,13 @@ describe('Database Operations', () => {
       await dbManager.transaction(() => {
         // Insert multiple patterns in a transaction
         dbManager.execute(
-          'INSERT OR REPLACE INTO patterns (id, name, category, description) VALUES (?, ?, ?, ?)',
-          ['tx_pattern_1', 'Transaction Pattern 1', 'Test', 'Test transaction']
+          'INSERT OR REPLACE INTO patterns (id, name, category, description, complexity) VALUES (?, ?, ?, ?, ?)',
+          ['tx_pattern_1', 'Transaction Pattern 1', 'Test', 'Test transaction', 'Low']
         );
 
         dbManager.execute(
-          'INSERT OR REPLACE INTO patterns (id, name, category, description) VALUES (?, ?, ?, ?)',
-          ['tx_pattern_2', 'Transaction Pattern 2', 'Test', 'Test transaction']
+          'INSERT OR REPLACE INTO patterns (id, name, category, description, complexity) VALUES (?, ?, ?, ?, ?)',
+          ['tx_pattern_2', 'Transaction Pattern 2', 'Test', 'Test transaction', 'Low']
         );
       });
 
@@ -172,6 +176,7 @@ describe('Database Operations', () => {
         name TEXT NOT NULL,
         category TEXT NOT NULL,
         description TEXT NOT NULL,
+        complexity TEXT NOT NULL,
         tags TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
@@ -179,8 +184,8 @@ describe('Database Operations', () => {
 
     // Insert a pattern that matches the search term
     dbManager.execute(
-      'INSERT OR REPLACE INTO patterns (id, name, category, description) VALUES (?, ?, ?, ?)',
-      ['singleton_pattern', 'Singleton', 'Creational', 'Singleton pattern description']
+      'INSERT OR REPLACE INTO patterns (id, name, category, description, complexity) VALUES (?, ?, ?, ?, ?)',
+      ['singleton_pattern', 'Singleton', 'Creational', 'Singleton pattern description', 'Low']
     );
 
     const searchTerm = 'singleton';

@@ -277,7 +277,15 @@ export class MCPResourcesHandler {
       const pattern = await this.config.databaseManager.getPatternById(patternId);
 
       if (!pattern) {
-        throw new Error(`Pattern with ID ${patternId} not found`);
+        return {
+          contents: [
+            {
+              uri: `pattern/${patternId}`,
+              mimeType: 'application/json',
+              text: '[]',
+            },
+          ],
+        };
       }
 
       return {

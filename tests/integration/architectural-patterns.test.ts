@@ -52,13 +52,15 @@ describe('Architectural Patterns', () => {
         id: 'clean-architecture',
         name: 'Clean Architecture',
         category: 'Architectural',
-        description: 'Separates concerns by organizing code into layers with dependencies flowing inward',
+        description:
+          'Separates concerns by organizing code into layers with dependencies flowing inward',
       },
       {
         id: 'hexagonal-architecture',
         name: 'Hexagonal Architecture',
         category: 'Architectural',
-        description: 'Isolates core application logic from external concerns using ports and adapters',
+        description:
+          'Isolates core application logic from external concerns using ports and adapters',
       },
       {
         id: 'onion-architecture',
@@ -76,18 +78,20 @@ describe('Architectural Patterns', () => {
         id: 'domain-driven-design',
         name: 'Domain-Driven Design',
         category: 'Architectural',
-        description: 'Strategic approach to complex software development centered around modeling business domain',
+        description:
+          'Strategic approach to complex software development centered around modeling business domain',
       },
     ];
 
     for (const pattern of architecturalPatterns) {
       dbManager.execute(
-        'INSERT OR IGNORE INTO patterns (id, name, category, description, created_at) VALUES (?, ?, ?, ?, ?)',
+        'INSERT OR IGNORE INTO patterns (id, name, category, description, complexity, created_at) VALUES (?, ?, ?, ?, ?, ?)',
         [
           pattern.id,
           pattern.name,
           pattern.category,
           pattern.description,
+          'Medium', // complexity
           new Date().toISOString(),
         ]
       );
@@ -101,10 +105,9 @@ describe('Architectural Patterns', () => {
   });
 
   it('should have Clean Architecture pattern in database', () => {
-    const pattern = dbManager.queryOne(
-      'SELECT name, category FROM patterns WHERE id = ?',
-      ['clean-architecture']
-    );
+    const pattern = dbManager.queryOne('SELECT name, category FROM patterns WHERE id = ?', [
+      'clean-architecture',
+    ]);
 
     expect(pattern).toEqual({
       name: 'Clean Architecture',
@@ -113,10 +116,9 @@ describe('Architectural Patterns', () => {
   });
 
   it('should have Hexagonal Architecture pattern in database', () => {
-    const pattern = dbManager.queryOne(
-      'SELECT name, category FROM patterns WHERE id = ?',
-      ['hexagonal-architecture']
-    );
+    const pattern = dbManager.queryOne('SELECT name, category FROM patterns WHERE id = ?', [
+      'hexagonal-architecture',
+    ]);
 
     expect(pattern).toEqual({
       name: 'Hexagonal Architecture',
@@ -125,10 +127,9 @@ describe('Architectural Patterns', () => {
   });
 
   it('should have Onion Architecture pattern in database', () => {
-    const pattern = dbManager.queryOne(
-      'SELECT name, category FROM patterns WHERE id = ?',
-      ['onion-architecture']
-    );
+    const pattern = dbManager.queryOne('SELECT name, category FROM patterns WHERE id = ?', [
+      'onion-architecture',
+    ]);
 
     expect(pattern).toEqual({
       name: 'Onion Architecture',
@@ -137,10 +138,9 @@ describe('Architectural Patterns', () => {
   });
 
   it('should have Domain-Driven Design pattern in database', () => {
-    const pattern = dbManager.queryOne(
-      'SELECT name, category FROM patterns WHERE id = ?',
-      ['domain-driven-design']
-    );
+    const pattern = dbManager.queryOne('SELECT name, category FROM patterns WHERE id = ?', [
+      'domain-driven-design',
+    ]);
 
     expect(pattern).toEqual({
       name: 'Domain-Driven Design',

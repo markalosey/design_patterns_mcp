@@ -110,11 +110,11 @@ class DesignPatternsMCPServer {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
 
-    // Resolve path relative to project root 
+    // Resolve path relative to project root
     // When running from src/, no need to go up
     // When running from dist/src/, go up two levels
     const isCompiled = __dirname.includes('dist');
-    const projectRoot = isCompiled 
+    const projectRoot = isCompiled
       ? path.resolve(__dirname, '..', '..')
       : path.resolve(__dirname, '..');
     const patternsPath = path.join(projectRoot, 'data', 'patterns');
@@ -377,7 +377,39 @@ class DesignPatternsMCPServer {
     );
 
     if (!pattern) {
-      throw new McpError(ErrorCode.InvalidRequest, `Pattern not found: ${args.patternId}`);
+      // Try to find similar patterns using semantic search
+      const similarPatterns = await this.semanticSearch.search({
+        text: args.patternId,
+        options: {
+          limit: 3,
+          includeMetadata: true,
+        },
+      });
+
+      if (similarPatterns.length > 0) {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `Pattern "${args.patternId}" not found. Here are similar patterns:\n\n${similarPatterns
+                .map(
+                  (p, i) =>
+                    `${i + 1}. **${p.pattern.name}** (${p.pattern.category})\n   ${p.pattern.description}\n   Score: ${(p.score * 100).toFixed(1)}%`
+                )
+                .join('\n\n')}`,
+            },
+          ],
+        };
+      } else {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `Pattern "${args.patternId}" not found and no similar patterns were found.`,
+            },
+          ],
+        };
+      }
     }
 
     const implementations = this.db.query(
@@ -589,15 +621,15 @@ async function main(): Promise<void> {
   // Get the directory of the current module
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);
-  
-  // Resolve path relative to project root 
+
+  // Resolve path relative to project root
   const isCompiled = __dirname.includes('dist');
-  const projectRoot = isCompiled 
+  const projectRoot = isCompiled
     ? path.resolve(__dirname, '..', '..')
     : path.resolve(__dirname, '..');
-  
+
   const defaultDbPath = path.join(projectRoot, 'data', 'design-patterns.db');
-  
+
   const config: MCPServerConfig = {
     databasePath: process.env.DATABASE_PATH || defaultDbPath,
     logLevel: (process.env.LOG_LEVEL as any) || 'info',
