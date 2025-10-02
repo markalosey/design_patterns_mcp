@@ -21,6 +21,7 @@ The **Design Patterns MCP Server** is a specialized server that integrates with 
 ### 🆕 Recent Improvements (v0.2.1)
 
 **Architecture Refactoring (October 2025)**
+
 - ✅ **Object Pool Pattern**: Eliminates memory leaks with bounded prepared statements
 - ✅ **Service Layer**: Centralized business logic with `PatternService`
 - ✅ **Facade Pattern**: Simplified handlers via `PatternHandlerFacade`
@@ -28,7 +29,6 @@ The **Design Patterns MCP Server** is a specialized server that integrates with 
 - ✅ **Performance**: 30-40% faster on repeated queries with smart caching
 - ✅ **Code Quality**: 40% reduction in main server file (704→422 lines)
 - ✅ **Pattern Catalog**: Expanded to 555+ patterns with code examples
-
 
 ### 🗂️ Available Pattern Categories
 
@@ -83,8 +83,7 @@ src/
 ├── strategies/         # Strategy pattern implementations
 ├── types/              # TypeScript type definitions
 ├── utils/              # Utility functions
-├── mcp-server.ts       # Original MCP server (deprecated)
-└── mcp-server-refactored.ts  # Refactored MCP server (recommended)
+└── mcp-server.ts       # MCP server
 
 data/
 ├── patterns/           # JSON files with 555+ pattern definitions
@@ -94,23 +93,27 @@ data/
 ### 🔧 Main Components
 
 **Core Services**
+
 - **DatabaseManager**: SQLite operations with Object Pool (prevents memory leaks)
 - **StatementPool**: LRU-based pool for prepared statements (max 100)
 - **CacheService**: In-memory LRU cache with TTL and metrics
 
 **Business Logic**
+
 - **PatternService**: Service Layer orchestrating pattern operations
 - **PatternRepository**: Data access abstraction (Repository Pattern)
 - **SemanticSearchService**: Semantic search with embeddings
 - **PatternMatcher**: Pattern matching and ranking logic
 
 **Integration**
+
 - **PatternHandlerFacade**: Facade simplifying MCP handlers
 - **VectorOperationsService**: Vector search using sqlite-vec
 - **LLMBridgeService**: Interface for language models (optional)
 - **EmbeddingServiceAdapter**: Adapter for embedding services
 
 **Infrastructure**
+
 - **SimpleContainer**: Dependency Injection container
 - **MigrationManager**: Database migrations
 - **PatternSeeder**: Initial data seeding
@@ -151,7 +154,7 @@ Add to your MCP configuration file (`.mcp.json` or Claude Desktop config):
   "mcpServers": {
     "design-patterns": {
       "command": "node",
-      "args": ["dist/src/mcp-server-refactored.js"],
+      "args": ["dist/src/mcp-server.js"],
       "cwd": "/path/to/design-patterns-mcp",
       "env": {
         "LOG_LEVEL": "info",
@@ -162,8 +165,6 @@ Add to your MCP configuration file (`.mcp.json` or Claude Desktop config):
 }
 ```
 
-**Note**: Use `mcp-server-refactored.js` for the improved version with all performance optimizations.
-
 ## 📖 Usage
 
 ### Finding Patterns with Natural Language
@@ -171,21 +172,25 @@ Add to your MCP configuration file (`.mcp.json` or Claude Desktop config):
 Use natural language descriptions to find appropriate design patterns through Claude Code:
 
 **For object creation problems:**
+
 - "I need to create complex objects with many optional configurations"
 - "How can I create different variations of similar objects?"
 - "What pattern helps with step-by-step object construction?"
 
 **For behavioral problems:**
+
 - "I need to notify multiple components when data changes"
 - "How to decouple command execution from the invoker?"
 - "What pattern helps with state-dependent behavior?"
 
 **For architectural problems:**
+
 - "How to structure a microservices communication system?"
 - "What pattern helps with distributed system resilience?"
 - "How to implement clean separation between layers?"
 
 **For React development:**
+
 - "How to manage state in React 18/19?"
 - "What patterns work with React Server Components?"
 - "How to optimize React performance?"
@@ -195,16 +200,13 @@ Use natural language descriptions to find appropriate design patterns through Cl
 - **find_patterns**: Semantic search for patterns using problem descriptions
   - Returns ranked recommendations with confidence scores
   - Supports category filtering and programming language preferences
-  
 - **search_patterns**: Keyword or semantic search with filtering options
   - Supports hybrid search (keyword + semantic)
   - Filter by category, tags, complexity
-  
 - **get_pattern_details**: Get comprehensive information about specific patterns
   - Includes code examples in multiple languages
   - Shows similar patterns and relationships
   - Displays implementations and use cases
-  
 - **count_patterns**: Statistics about available patterns by category
   - Optional detailed breakdown by category
 
@@ -234,16 +236,19 @@ npm run generate-embeddings  # Generate embeddings for semantic search
 ### Problem-Based Pattern Discovery
 
 **Distributed Systems:**
+
 - "I need a pattern for handling service failures gracefully" → Circuit Breaker, Bulkhead
 - "How to implement eventual consistency in distributed data?" → Event Sourcing, CQRS
 - "What pattern helps with service discovery and load balancing?" → Service Registry, API Gateway
 
 **Data Validation:**
+
 - "I need to validate complex business rules on input data" → Specification Pattern
 - "How to compose validation rules dynamically?" → Chain of Responsibility
 - "What pattern separates validation logic from business logic?" → Strategy Pattern
 
 **Performance Optimization:**
+
 - "I need to cache expensive computations efficiently" → Cache-Aside, Write-Through
 - "How to implement lazy loading for large datasets?" → Lazy Loading, Virtual Proxy
 - "What pattern helps with connection pooling?" → Object Pool Pattern
@@ -251,11 +256,13 @@ npm run generate-embeddings  # Generate embeddings for semantic search
 ### Category-Specific Searches
 
 **Enterprise Applications:**
+
 - "Show me enterprise patterns for data access" → Repository, Unit of Work, Data Mapper
 - "What patterns help with dependency injection?" → DI Container, Service Locator
 - "How to implement domain-driven design?" → Aggregate, Value Object, Bounded Context
 
 **Security Implementation:**
+
 - "I need authentication and authorization patterns" → RBAC, OAuth 2.0, JWT
 - "What patterns help with secure data handling?" → Encryption at Rest, Defense in Depth
 - "How to implement role-based access control?" → RBAC Pattern, Policy-Based Access
@@ -286,7 +293,7 @@ POOL_MAX_SIZE=100  # Prepared statement pool size
 ### Using the Refactored Server
 
 ```typescript
-import { createDesignPatternsServer, TOKENS } from './mcp-server-refactored.js';
+import { createDesignPatternsServer, TOKENS } from './mcp-server.js';
 
 const server = createDesignPatternsServer({
   databasePath: './data/design-patterns.db',
@@ -395,17 +402,17 @@ npm run test:contract  # MCP protocol compliance
 
 This project practices what it preaches by implementing:
 
-| Pattern | Location | Purpose |
-|---------|----------|---------|
-| **Repository** | `repositories/pattern-repository.ts` | Data access abstraction |
-| **Service Layer** | `services/pattern-service.ts` | Business logic orchestration |
-| **Object Pool** | `services/statement-pool.ts` | Resource management |
-| **Facade** | `facades/pattern-handler-facade.ts` | Simplified interface |
-| **Dependency Injection** | `core/container.ts` | Inversion of control |
-| **Strategy** | `strategies/search-strategy.ts` | Interchangeable algorithms |
-| **Factory** | `factories/service-factory.ts` | Object creation |
-| **Singleton** | Via DI Container | Single instance management |
-| **Adapter** | `adapters/llm-adapter.ts` | External service integration |
+| Pattern                  | Location                             | Purpose                      |
+| ------------------------ | ------------------------------------ | ---------------------------- |
+| **Repository**           | `repositories/pattern-repository.ts` | Data access abstraction      |
+| **Service Layer**        | `services/pattern-service.ts`        | Business logic orchestration |
+| **Object Pool**          | `services/statement-pool.ts`         | Resource management          |
+| **Facade**               | `facades/pattern-handler-facade.ts`  | Simplified interface         |
+| **Dependency Injection** | `core/container.ts`                  | Inversion of control         |
+| **Strategy**             | `strategies/search-strategy.ts`      | Interchangeable algorithms   |
+| **Factory**              | `factories/service-factory.ts`       | Object creation              |
+| **Singleton**            | Via DI Container                     | Single instance management   |
+| **Adapter**              | `adapters/llm-adapter.ts`            | External service integration |
 
 ## 🤝 Contributing
 
