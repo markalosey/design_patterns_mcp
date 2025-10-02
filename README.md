@@ -29,7 +29,6 @@ The **Design Patterns MCP Server** is a specialized server that integrates with 
 - ✅ **Code Quality**: 40% reduction in main server file (704→422 lines)
 - ✅ **Pattern Catalog**: Expanded to 555+ patterns with code examples
 
-See [REFACTORING_GUIDE.md](./REFACTORING_GUIDE.md) for details.
 
 ### 🗂️ Available Pattern Categories
 
@@ -446,7 +445,7 @@ This project is licensed under the MIT License. See [LICENSE](./LICENSE) for det
 - 🐛 **Issues**: Report bugs through [GitHub Issues](https://github.com/your-org/design-patterns-mcp/issues)
 - 💬 **Discussions**: Join [GitHub Discussions](https://github.com/your-org/design-patterns-mcp/discussions)
 - 📧 **Email**: apolosan@protonmail.com
-- 📚 **Documentation**: See [REFACTORING_GUIDE.md](./REFACTORING_GUIDE.md) for architecture details
+- 📚 **Documentation**: Comprehensive architecture and refactoring details available in project documentation
 
 ## 🙏 Acknowledgments
 
