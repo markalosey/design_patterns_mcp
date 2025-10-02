@@ -23,6 +23,11 @@ interface PatternData {
     code: string;
     explanation: string;
   }>;
+  examples?: Record<string, {
+    language?: string;
+    description?: string;
+    code: string;
+  }>;
   relatedPatterns?: Array<{
     patternId: string;
     type: string;
@@ -66,18 +71,34 @@ export class PatternLoaderService {
           continue;
         }
 
-        // Convert pattern data to database format
+        // Convert examples to proper format
+        const examples = patternData.examples ? Object.entries(patternData.examples).reduce((acc, [lang, example]) => {
+          acc[lang] = {
+            language: example.language || lang,
+            description: example.description,
+            code: example.code,
+          };
+          return acc;
+        }, {} as Record<string, { language: string; description?: string; code: string }>) : undefined;
+
+        // Convert pattern data to Pattern interface format
         const pattern: Pattern = {
           id: patternData.id,
           name: patternData.name,
           category: patternData.category,
           description: patternData.description,
-          when_to_use: (patternData.whenToUse || patternData.when_to_use || []).join('\n'),
-          benefits: (patternData.benefits || []).join('\n'),
-          drawbacks: (patternData.drawbacks || []).join('\n'),
-          use_cases: (patternData.useCases || patternData.use_cases || []).join('\n'),
+          problem: '', // Will be populated from JSON if available
+          solution: '', // Will be populated from JSON if available
+          when_to_use: patternData.whenToUse || patternData.when_to_use || [],
+          benefits: patternData.benefits || [],
+          drawbacks: patternData.drawbacks || [],
+          use_cases: patternData.useCases || patternData.use_cases || [],
+          implementations: [],
           complexity: patternData.complexity,
-          tags: patternData.tags?.join(',') || '',
+          tags: patternData.tags,
+          examples,
+          createdAt: patternData.createdAt ? new Date(patternData.createdAt) : new Date(),
+          updatedAt: patternData.updatedAt ? new Date(patternData.updatedAt) : new Date(),
         };
 
         patterns.push(pattern);
@@ -124,6 +145,7 @@ export class PatternLoaderService {
    */
   async loadAllPatternCategories(): Promise<void> {
     const patternFiles = [
+      'abstract-server-pattern.json',
       'ai-patterns.json',
       'anti-patterns.json',
       'architectural-patterns.json',
@@ -143,12 +165,18 @@ export class PatternLoaderService {
       'reactive-patterns.json',
       'security-patterns.json',
       'testing-patterns.json',
+      'data-engineering-patterns.json',
+      'agentic-patterns.json',
     ];
 
     logger.info('pattern-loader', 'Loading all pattern categories...');
 
     for (const fileName of patternFiles) {
-      const filePath = path.join(process.cwd(), 'src', 'data', 'patterns', fileName);
+      // Check both src/data/patterns and data/patterns directories
+      let filePath = path.join(process.cwd(), 'data', 'patterns', fileName);
+      if (!fs.existsSync(filePath)) {
+        filePath = path.join(process.cwd(), 'src', 'data', 'patterns', fileName);
+      }
       await this.loadPatternsFromFile(filePath);
     }
 

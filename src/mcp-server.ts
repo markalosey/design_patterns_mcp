@@ -370,7 +370,7 @@ class DesignPatternsMCPServer {
     const pattern = this.db.queryOne(
       `
       SELECT id, name, category, description, when_to_use, benefits,
-             drawbacks, use_cases, complexity, tags, created_at
+             drawbacks, use_cases, complexity, tags, examples, created_at
       FROM patterns WHERE id = ?
     `,
       [args.patternId]
@@ -420,6 +420,29 @@ class DesignPatternsMCPServer {
       [args.patternId]
     );
 
+    // Parse code examples if available
+    let examplesText = '';
+    if (pattern.examples) {
+      try {
+        const examples = JSON.parse(pattern.examples);
+        const exampleKeys = Object.keys(examples);
+        
+        if (exampleKeys.length > 0) {
+          examplesText = '\n\n**Code Examples:**\n';
+          exampleKeys.forEach(lang => {
+            const example = examples[lang];
+            examplesText += `\n### ${lang.charAt(0).toUpperCase() + lang.slice(1)}\n`;
+            if (example.description) {
+              examplesText += `${example.description}\n\n`;
+            }
+            examplesText += `\`\`\`${lang}\n${example.code}\n\`\`\`\n`;
+          });
+        }
+      } catch (e) {
+        // If parsing fails, skip examples
+      }
+    }
+
     return {
       content: [
         {
@@ -432,9 +455,10 @@ class DesignPatternsMCPServer {
             `**Drawbacks:** ${parseArrayProperty(pattern.drawbacks).join(', ')}\n\n` +
             `**Use Cases:** ${parseArrayProperty(pattern.use_cases).join(', ')}\n\n` +
             `**Complexity:** ${pattern.complexity}\n\n` +
-            `**Tags:** ${parseTags(pattern.tags).join(', ')}\n\n` +
+            `**Tags:** ${parseTags(pattern.tags).join(', ')}\n` +
+            examplesText +
             (implementations.length > 0
-              ? `**Implementations:**\n` +
+              ? `\n\n**Implementations:**\n` +
                 implementations
                   .map(
                     impl =>

@@ -41,6 +41,7 @@ export interface SearchResult {
   };
   score: number;
   rank: number;
+  highlights?: string[];
   metadata: {
     searchQuery: string;
     searchTime: number;

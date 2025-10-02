@@ -268,9 +268,16 @@ export class CacheService {
   }
 }
 
-// Singleton instance
+/**
+ * Singleton pattern consolidated - use DI Container instead
+ * These functions are deprecated and kept for backward compatibility
+ * @deprecated Use DI Container with TOKENS.CACHE_SERVICE instead
+ */
 let cacheService: CacheService | null = null;
 
+/**
+ * @deprecated Use container.get(TOKENS.CACHE_SERVICE) instead
+ */
 export function getCacheService(): CacheService {
   if (!cacheService) {
     cacheService = new CacheService();
@@ -278,16 +285,20 @@ export function getCacheService(): CacheService {
   return cacheService;
 }
 
+/**
+ * @deprecated Use container.registerSingleton(TOKENS.CACHE_SERVICE, ...) instead
+ */
 export function initializeCacheService(config?: Partial<CacheConfig>): CacheService {
   if (cacheService) {
-    // Clear existing cache if reinitializing
     cacheService.clear();
   }
-
   cacheService = new CacheService(config);
   return cacheService;
 }
 
+/**
+ * @deprecated Managed by DI Container lifecycle
+ */
 export function closeCacheService(): void {
   if (cacheService) {
     cacheService.clear();

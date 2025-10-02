@@ -23,6 +23,16 @@ export interface PatternImplementation {
   explanation: string;
 }
 
+export interface PatternCodeExample {
+  language: string;
+  description?: string;
+  code: string;
+}
+
+export interface PatternExamples {
+  [language: string]: PatternCodeExample;
+}
+
 export interface PatternRelationship {
   type: string;
   patternId: string;
@@ -93,8 +103,8 @@ export interface Pattern {
   /** Implementation details (legacy, use implementations array) */
   implementation?: string;
 
-  /** Code examples */
-  examples?: string;
+  /** Code examples (optional, indexed by language) */
+  examples?: PatternExamples;
 
   /** Alternative names for this pattern */
   alsoKnownAs?: string[];

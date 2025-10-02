@@ -62,11 +62,14 @@ export const TOKENS = {
   // Core services
   DATABASE_MANAGER: Symbol('DatabaseManager'),
   CONTAINER: Symbol('Container'),
+  CACHE_SERVICE: Symbol('CacheService'),
   
   // Pattern services
   PATTERN_REPOSITORY: Symbol('PatternRepository'),
+  PATTERN_SERVICE: Symbol('PatternService'),
   PATTERN_MATCHER: Symbol('PatternMatcher'),
   PATTERN_ANALYZER: Symbol('PatternAnalyzer'),
+  PATTERN_STORAGE: Symbol('PatternStorage'),
   
   // Search services
   SEARCH_STRATEGY: Symbol('SearchStrategy'),
@@ -90,6 +93,10 @@ export const TOKENS = {
   // Factories
   SERVICE_FACTORY: Symbol('ServiceFactory'),
   SEARCH_STRATEGY_FACTORY: Symbol('SearchStrategyFactory'),
+  
+  // Migration & Seeding
+  MIGRATION_MANAGER: Symbol('MigrationManager'),
+  PATTERN_SEEDER: Symbol('PatternSeeder'),
 } as const;
 
 export type ServiceToken = typeof TOKENS[keyof typeof TOKENS];

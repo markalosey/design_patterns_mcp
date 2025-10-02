@@ -5,14 +5,14 @@
 
 import { describe, test, expect, beforeAll, afterAll } from 'vitest';
 import { createDesignPatternsServer } from '../../src/mcp-server.js';
+import { getTestDatabasePath } from '../helpers/test-db';
 
 describe('MCP Server Integration Tests', () => {
   let server: any;
 
   beforeAll(async () => {
-    // Create server with real services
     const config = {
-      databasePath: './data/design-patterns.db',
+      databasePath: getTestDatabasePath(),
       logLevel: 'info' as const,
       enableLLM: false,
       maxConcurrentRequests: 10,

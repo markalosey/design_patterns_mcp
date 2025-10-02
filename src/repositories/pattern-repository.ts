@@ -312,7 +312,7 @@ export class SqlitePatternRepository implements PatternRepository {
       consequences: row.consequences,
       implementation: row.implementation,
       useCases: row.use_cases ? (typeof row.use_cases === 'string' ? JSON.parse(row.use_cases) : row.use_cases) : [],
-      examples: row.examples,
+      examples: row.examples ? (typeof row.examples === 'string' ? JSON.parse(row.examples) : row.examples) : undefined,
       alsoKnownAs: row.also_known_as ? JSON.parse(row.also_known_as) : undefined,
       metadata: row.metadata ? JSON.parse(row.metadata) : {},
       createdAt: new Date(row.created_at),

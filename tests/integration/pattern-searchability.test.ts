@@ -1,16 +1,13 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { DatabaseManager, initializeDatabaseManager } from '../../src/services/database-manager';
 import { parseTags } from '../../src/utils/parse-tags';
+import { getTestDatabaseConfig } from '../helpers/test-db';
 
 describe('Pattern Searchability Tests', () => {
   let db: DatabaseManager;
 
   beforeAll(async () => {
-    const config = {
-      filename: './data/design-patterns.db',
-      options: { readonly: true },
-    };
-    db = await initializeDatabaseManager(config);
+    db = await initializeDatabaseManager(getTestDatabaseConfig(true));
   });
 
   afterAll(async () => {
@@ -22,11 +19,11 @@ describe('Pattern Searchability Tests', () => {
     expect(patterns[0].count).toBeGreaterThan(0);
   });
 
-  it('should have Creational patterns searchable', async () => {
-    const creationalPatterns = db.query('SELECT name FROM patterns WHERE category = ?', [
-      'Creational',
+  it('should have Data Management patterns searchable', async () => {
+    const dataPatterns = db.query('SELECT name FROM patterns WHERE category = ?', [
+      'Data Management',
     ]);
-    expect(creationalPatterns.length).toBeGreaterThan(0);
+    expect(dataPatterns.length).toBeGreaterThan(0);
   });
 
   it('should have Behavioral patterns searchable', async () => {
@@ -36,11 +33,11 @@ describe('Pattern Searchability Tests', () => {
     expect(behavioralPatterns.length).toBeGreaterThan(0);
   });
 
-  it('should have Structural patterns searchable', async () => {
-    const structuralPatterns = db.query('SELECT name FROM patterns WHERE category = ?', [
-      'Structural',
+  it('should have Integration patterns searchable', async () => {
+    const integrationPatterns = db.query('SELECT name FROM patterns WHERE category = ?', [
+      'Integration',
     ]);
-    expect(structuralPatterns.length).toBeGreaterThan(0);
+    expect(integrationPatterns.length).toBeGreaterThan(0);
   });
 
   it('should have architectural patterns searchable', async () => {
@@ -72,15 +69,18 @@ describe('Pattern Searchability Tests', () => {
 
   it('should support category filtering', async () => {
     const categories = [
-      'Creational',
       'Behavioral',
-      'Structural',
       'Architectural',
       'Cloud-Native',
       'AI/ML',
       'Functional',
       'Reactive',
       'Anti-Pattern',
+      'Integration',
+      'Data Management',
+      'Performance',
+      'Security',
+      'Testing',
     ];
     for (const category of categories) {
       const patterns = db.query('SELECT name FROM patterns WHERE category = ?', [category]);

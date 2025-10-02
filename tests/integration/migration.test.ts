@@ -1,17 +1,14 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { DatabaseManager } from '../../src/services/database-manager';
 import { MigrationManager } from '../../src/services/migrations';
+import { getTestDatabaseConfig } from '../helpers/test-db';
 
 describe('Database Migration', () => {
   let dbManager: DatabaseManager;
   let migrationManager: MigrationManager;
 
   beforeAll(async () => {
-    // Use the same database manager as the application
-    dbManager = new DatabaseManager({
-      filename: './data/design-patterns.db',
-      options: { readonly: true },
-    });
+    dbManager = new DatabaseManager(getTestDatabaseConfig(false));
     await dbManager.initialize();
 
     migrationManager = new MigrationManager(dbManager, './migrations');

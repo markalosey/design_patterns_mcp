@@ -7,6 +7,7 @@ import initSqlJs from 'sql.js';
 import path from 'path';
 import fs from 'fs';
 import { logger } from './logger.js';
+import { StatementPool } from './statement-pool.js';
 
 export interface DatabaseConfig {
   filename: string;
@@ -22,11 +23,12 @@ export class DatabaseManager {
   private db: any = null;
   private SQL: any = null;
   private config: DatabaseConfig;
-  private preparedStatements = new Map<string, any>();
+  private statementPool: StatementPool;
   private queryMetrics = new Map<string, { count: number; totalTime: number; avgTime: number }>();
 
   constructor(config: DatabaseConfig) {
     this.config = config;
+    this.statementPool = new StatementPool({ maxSize: 100, enableMetrics: true });
   }
 
   /**
@@ -70,11 +72,19 @@ export class DatabaseManager {
    */
   async close(): Promise<void> {
     if (this.db) {
-      // Export database to file before closing
-      if (this.config.filename) {
-        const data = this.db.export();
-        const buffer = Buffer.from(data);
-        fs.writeFileSync(this.config.filename, buffer);
+      // Export database to file before closing (only if not readonly and path exists)
+      if (this.config.filename && !this.config.options?.readonly) {
+        try {
+          const dbDir = path.dirname(this.config.filename);
+          if (!fs.existsSync(dbDir)) {
+            fs.mkdirSync(dbDir, { recursive: true });
+          }
+          const data = this.db.export();
+          const buffer = Buffer.from(data);
+          fs.writeFileSync(this.config.filename, buffer);
+        } catch (error) {
+          logger.warn('database-manager', `Failed to export database on close: ${error}`);
+        }
       }
 
       this.db.close();
@@ -94,12 +104,8 @@ export class DatabaseManager {
     const startTime = Date.now();
 
     try {
-      // Get or create prepared statement
-      let stmt = this.preparedStatements.get(sql);
-      if (!stmt) {
-        stmt = this.db.prepare(sql);
-        this.preparedStatements.set(sql, stmt);
-      }
+      // Get or create prepared statement using Object Pool
+      const stmt = this.statementPool.getOrCreate(sql, () => this.db.prepare(sql));
 
       const result = stmt.run(params);
       const executionTime = Date.now() - startTime;
@@ -125,12 +131,8 @@ export class DatabaseManager {
     const startTime = Date.now();
 
     try {
-      // Get or create prepared statement
-      let stmt = this.preparedStatements.get(sql);
-      if (!stmt) {
-        stmt = this.db.prepare(sql);
-        this.preparedStatements.set(sql, stmt);
-      }
+      // Get or create prepared statement using Object Pool
+      const stmt = this.statementPool.getOrCreate(sql, () => this.db.prepare(sql));
 
       // Bind parameters if provided
       if (params && params.length > 0) {
@@ -166,12 +168,8 @@ export class DatabaseManager {
     const startTime = Date.now();
 
     try {
-      // Get or create prepared statement
-      let stmt = this.preparedStatements.get(sql);
-      if (!stmt) {
-        stmt = this.db.prepare(sql);
-        this.preparedStatements.set(sql, stmt);
-      }
+      // Get or create prepared statement using Object Pool
+      const stmt = this.statementPool.getOrCreate(sql, () => this.db.prepare(sql));
 
       // Bind parameters if provided
       if (params && params.length > 0) {
@@ -270,7 +268,7 @@ export class DatabaseManager {
         pageCount,
         pageSize,
         databaseSize,
-        cacheSize: this.preparedStatements.size,
+        cacheSize: 0,
         journalMode: 'MEMORY', // sql.js default
         tableCount,
         indexCount,
@@ -348,12 +346,14 @@ export class DatabaseManager {
    * Clear prepared statement cache
    */
   clearPreparedStatements(): void {
-    for (const stmt of this.preparedStatements.values()) {
-      if (stmt && typeof stmt.free === 'function') {
-        stmt.free();
-      }
-    }
-    this.preparedStatements.clear();
+    this.statementPool.clear();
+  }
+
+  /**
+   * Get statement pool metrics
+   */
+  getPoolMetrics() {
+    return this.statementPool.getMetrics();
   }
 
   /**
@@ -403,9 +403,16 @@ export interface HealthCheckResult {
   lastCheck: Date;
 }
 
-// Singleton instance for the application
+/**
+ * Singleton pattern consolidated - use DI Container instead
+ * These functions are deprecated and kept for backward compatibility
+ * @deprecated Use DI Container with TOKENS.DATABASE_MANAGER instead
+ */
 let databaseManager: DatabaseManager | null = null;
 
+/**
+ * @deprecated Use container.get(TOKENS.DATABASE_MANAGER) instead
+ */
 export function getDatabaseManager(): DatabaseManager {
   if (!databaseManager) {
     throw new Error('Database manager not initialized. Call initializeDatabaseManager() first.');
@@ -413,6 +420,9 @@ export function getDatabaseManager(): DatabaseManager {
   return databaseManager;
 }
 
+/**
+ * @deprecated Use container.registerSingleton(TOKENS.DATABASE_MANAGER, ...) instead
+ */
 export async function initializeDatabaseManager(config: DatabaseConfig): Promise<DatabaseManager> {
   if (databaseManager) {
     await databaseManager.close();
@@ -424,6 +434,9 @@ export async function initializeDatabaseManager(config: DatabaseConfig): Promise
   return databaseManager;
 }
 
+/**
+ * @deprecated Managed by DI Container lifecycle
+ */
 export async function closeDatabaseManager(): Promise<void> {
   if (databaseManager) {
     await databaseManager.close();

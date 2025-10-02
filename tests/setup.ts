@@ -31,9 +31,18 @@ beforeEach(() => {
 });
 
 // Clean up after tests
-afterAll(() => {
+afterAll(async () => {
+  // Wait a bit to ensure all file handles are closed
+  await new Promise(resolve => setTimeout(resolve, 100));
+  
   // Clean up temp directory
-  rmSync(TEST_DATA_DIR, { recursive: true, force: true });
+  try {
+    if (existsSync(TEST_DATA_DIR)) {
+      rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 });
+    }
+  } catch (error) {
+    console.warn('Failed to clean up temp directory:', error);
+  }
 
   // Reset environment
   delete process.env.TEST_DB_PATH;

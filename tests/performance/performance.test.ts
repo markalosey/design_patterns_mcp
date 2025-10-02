@@ -9,6 +9,7 @@ import { CacheService } from '../../src/services/cache';
 import { PatternMatcher } from '../../src/services/pattern-matcher';
 import { VectorOperationsService } from '../../src/services/vector-operations';
 import { performance } from 'perf_hooks';
+import { getTestDatabaseConfig } from '../helpers/test-db';
 
 describe('Performance Tests', () => {
   let databaseManager: DatabaseManager;
@@ -24,11 +25,7 @@ describe('Performance Tests', () => {
   };
 
   beforeAll(async () => {
-    // Initialize services
-    databaseManager = new DatabaseManager({
-      filename: './data/design-patterns.db',
-      options: { readonly: true },
-    });
+    databaseManager = new DatabaseManager(getTestDatabaseConfig(true));
     await databaseManager.initialize();
 
     cacheService = new CacheService({

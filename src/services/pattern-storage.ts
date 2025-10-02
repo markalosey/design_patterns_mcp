@@ -3,21 +3,10 @@
  * Handles database operations for design patterns
  */
 import { getDatabaseManager } from './database-manager.js';
+import type { Pattern } from '../models/pattern.js';
 
-export interface Pattern {
-  id: string;
-  name: string;
-  category: string;
-  description: string;
-  when_to_use?: string;
-  benefits?: string;
-  drawbacks?: string;
-  use_cases?: string;
-  complexity: string;
-  tags?: string;
-  created_at?: string;
-  updated_at?: string;
-}
+// Re-export Pattern interface for backwards compatibility
+export type { Pattern } from '../models/pattern.js';
 
 export interface PatternImplementation {
   id: string;
@@ -46,8 +35,8 @@ export class PatternStorageService {
   async storePattern(pattern: Pattern): Promise<void> {
     const sql = `
       INSERT OR REPLACE INTO patterns
-      (id, name, category, description, when_to_use, benefits, drawbacks, use_cases, complexity, tags, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+      (id, name, category, description, when_to_use, benefits, drawbacks, use_cases, complexity, tags, examples, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
     `;
 
     const params = [
@@ -55,12 +44,13 @@ export class PatternStorageService {
       pattern.name,
       pattern.category,
       pattern.description,
-      pattern.when_to_use || '',
-      pattern.benefits || '',
-      pattern.drawbacks || '',
-      pattern.use_cases || '',
+      Array.isArray(pattern.when_to_use) ? pattern.when_to_use.join(',') : '',
+      Array.isArray(pattern.benefits) ? pattern.benefits.join(',') : '',
+      Array.isArray(pattern.drawbacks) ? pattern.drawbacks.join(',') : '',
+      Array.isArray(pattern.use_cases) ? pattern.use_cases.join(',') : (pattern.useCases || []).join(','),
       pattern.complexity,
-      pattern.tags || '',
+      Array.isArray(pattern.tags) ? pattern.tags.join(',') : '',
+      pattern.examples ? JSON.stringify(pattern.examples) : null,
     ];
 
     this.db.execute(sql, params);
@@ -226,14 +216,17 @@ export class PatternStorageService {
           name: pattern.name,
           category: pattern.category,
           description: pattern.description,
-          when_to_use: pattern.when_to_use,
-          benefits: pattern.benefits,
-          drawbacks: pattern.drawbacks,
-          use_cases: pattern.use_cases,
+          problem: pattern.problem || '',
+          solution: pattern.solution || '',
+          when_to_use: pattern.when_to_use ? pattern.when_to_use.split('\n').filter(Boolean) : [],
+          benefits: pattern.benefits ? pattern.benefits.split('\n').filter(Boolean) : [],
+          drawbacks: pattern.drawbacks ? pattern.drawbacks.split('\n').filter(Boolean) : [],
+          use_cases: pattern.use_cases ? pattern.use_cases.split('\n').filter(Boolean) : [],
+          implementations: [],
           complexity: pattern.complexity,
-          tags: pattern.tags,
-          created_at: pattern.created_at,
-          updated_at: pattern.updated_at,
+          tags: pattern.tags ? pattern.tags.split(',').filter(Boolean) : [],
+          createdAt: new Date(pattern.created_at || Date.now()),
+          updatedAt: new Date(pattern.updated_at || Date.now()),
         },
         score,
       };
@@ -309,9 +302,16 @@ export class PatternStorageService {
   }
 }
 
-// Singleton instance
+/**
+ * Singleton pattern consolidated - use DI Container instead
+ * These functions are deprecated and kept for backward compatibility
+ * @deprecated Use DI Container with TOKENS.PATTERN_STORAGE instead
+ */
 let patternStorageService: PatternStorageService | null = null;
 
+/**
+ * @deprecated Use container.get(TOKENS.PATTERN_STORAGE) instead
+ */
 export function getPatternStorageService(): PatternStorageService {
   if (!patternStorageService) {
     patternStorageService = new PatternStorageService();
