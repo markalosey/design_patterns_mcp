@@ -70,7 +70,7 @@ npm install -g .
 {
   "name": "design-patterns",
   "command": "node",
-  "args": ["/Users/mlosey/fresh-start/fresh-start-mcp/design_patterns_mcp/dist/mcp-server.js"],
+  "args": ["/Users/mlosey/fresh-start/fresh-start-mcp/design_patterns_mcp/dist/src/mcp-server.js"],
   "env": {
     "LOG_LEVEL": "info",
     "DATABASE_PATH": "/Users/mlosey/fresh-start/fresh-start-mcp/design_patterns_mcp/data/design-patterns.db"
@@ -89,7 +89,7 @@ If Cursor uses a configuration file, create or edit the MCP configuration:
   "mcpServers": {
     "design-patterns": {
       "command": "node",
-      "args": ["/Users/mlosey/fresh-start/fresh-start-mcp/design_patterns_mcp/dist/mcp-server.js"],
+      "args": ["/Users/mlosey/fresh-start/fresh-start-mcp/design_patterns_mcp/dist/src/mcp-server.js"],
       "env": {
         "LOG_LEVEL": "info",
         "DATABASE_PATH": "/Users/mlosey/fresh-start/fresh-start-mcp/design_patterns_mcp/data/design-patterns.db",

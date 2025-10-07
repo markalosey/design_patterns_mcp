@@ -14,7 +14,7 @@ The following configuration has been added to Cursor's mcp.json:
 "design-patterns": {
   "command": "node",
   "args": [
-    "/Users/mlosey/fresh-start/fresh-start-mcp/design_patterns_mcp/dist/mcp-server.js"
+    "/Users/mlosey/fresh-start/fresh-start-mcp/design_patterns_mcp/dist/src/mcp-server.js"
   ],
   "env": {
     "LOG_LEVEL": "info",
