@@ -211,3 +211,6 @@ logs/
 
 # OpenCode configuration  
 # opencode.json
+
+# Local working files and implementation artifacts
+.local/

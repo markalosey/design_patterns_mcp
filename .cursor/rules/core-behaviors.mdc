@@ -81,31 +81,3 @@ When making changes that could affect performance:
 2. Test with the performance test suite in `tests/performance/`
 3. Monitor vector operations and embedding generation
 4. Ensure database queries are optimized
-
-## Context7 MCP Integration
-
-When using Context7 MCP server for library documentation:
-
-### Library Search Workflow
-1. Always use `mcp_context7_resolve-library-id` first to find matching libraries
-2. Analyze results based on name match, trust score (7-10 preferred), and code snippet count
-3. Select the most relevant library ID from the results
-4. Use `mcp_context7_get-library-docs` with appropriate parameters
-
-### Documentation Retrieval Best Practices
-- Use specific topics to focus results (e.g., "hooks", "routing", "authentication")
-- Adjust token limits based on need: 1000-2000 for specific topics, 5000+ for comprehensive docs
-- Prefer official documentation sources with high trust scores
-- Use version-specific library IDs when available
-
-### Context7-Specific Error Handling
-- Handle cases where no libraries are found by suggesting alternatives
-- Explain library selection rationale to users
-- Provide fallback suggestions when API calls fail
-- Consider multiple library versions if available
-
-### Integration with Design Patterns
-- Use Context7 to research pattern implementations in specific libraries
-- Cross-reference pattern documentation with library-specific examples
-- Provide comprehensive examples that combine patterns with library usage
-- Maintain consistency between pattern documentation and library examples

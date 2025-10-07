@@ -103,3 +103,6 @@ AI-ASSISTANT-CONSISTENCY-IMPLEMENTATION-GUIDE.md
 context7-test-results/
 context7-cache/
 context7-documentation-cache/
+
+# Local working files and implementation artifacts
+.local/
