@@ -14,12 +14,11 @@ The following configuration has been added to Cursor's mcp.json:
 "design-patterns": {
   "command": "node",
   "args": [
-    "dist/src/mcp-server.js"
+    "/Users/mlosey/fresh-start/fresh-start-mcp/design_patterns_mcp/dist/mcp-server.js"
   ],
-  "cwd": "/Users/mlosey/fresh-start/fresh-start-mcp/design_patterns_mcp",
   "env": {
     "LOG_LEVEL": "info",
-    "DATABASE_PATH": "./data/design-patterns.db"
+    "DATABASE_PATH": "/Users/mlosey/fresh-start/fresh-start-mcp/design_patterns_mcp/data/design-patterns.db"
   }
 }
 ```

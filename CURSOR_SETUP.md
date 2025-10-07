@@ -40,7 +40,25 @@ timeout 5s npm start || echo "Server started successfully"
 
 ## 🔧 Cursor MCP Configuration
 
-### Method 1: Cursor Settings (Recommended)
+### Method 1: Global Installation (Recommended for Production)
+
+For the most robust setup, install the package globally:
+
+```bash
+# Install globally
+npm install -g .
+
+# Then use this simple configuration:
+```
+
+```json
+{
+  "name": "design-patterns",
+  "command": "design-patterns-mcp"
+}
+```
+
+### Method 2: Absolute Path Configuration (Current Setup)
 
 1. Open Cursor IDE
 2. Go to **Settings** (Cmd/Ctrl + ,)
@@ -52,16 +70,15 @@ timeout 5s npm start || echo "Server started successfully"
 {
   "name": "design-patterns",
   "command": "node",
-  "args": ["dist/src/mcp-server.js"],
-  "cwd": "/Users/mlosey/fresh-start/fresh-start-mcp/design_patterns_mcp",
+  "args": ["/Users/mlosey/fresh-start/fresh-start-mcp/design_patterns_mcp/dist/mcp-server.js"],
   "env": {
     "LOG_LEVEL": "info",
-    "DATABASE_PATH": "./data/design-patterns.db"
+    "DATABASE_PATH": "/Users/mlosey/fresh-start/fresh-start-mcp/design_patterns_mcp/data/design-patterns.db"
   }
 }
 ```
 
-### Method 2: Configuration File
+### Method 3: Configuration File
 
 If Cursor uses a configuration file, create or edit the MCP configuration:
 
@@ -72,11 +89,10 @@ If Cursor uses a configuration file, create or edit the MCP configuration:
   "mcpServers": {
     "design-patterns": {
       "command": "node",
-      "args": ["dist/src/mcp-server.js"],
-      "cwd": "/Users/mlosey/fresh-start/fresh-start-mcp/design_patterns_mcp",
+      "args": ["/Users/mlosey/fresh-start/fresh-start-mcp/design_patterns_mcp/dist/mcp-server.js"],
       "env": {
         "LOG_LEVEL": "info",
-        "DATABASE_PATH": "./data/design-patterns.db",
+        "DATABASE_PATH": "/Users/mlosey/fresh-start/fresh-start-mcp/design_patterns_mcp/data/design-patterns.db",
         "ENABLE_LLM": "false",
         "MAX_CONCURRENT_REQUESTS": "10"
       }
