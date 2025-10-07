@@ -89,7 +89,9 @@ If Cursor uses a configuration file, create or edit the MCP configuration:
   "mcpServers": {
     "design-patterns": {
       "command": "node",
-      "args": ["/Users/mlosey/fresh-start/fresh-start-mcp/design_patterns_mcp/dist/src/mcp-server.js"],
+      "args": [
+        "/Users/mlosey/fresh-start/fresh-start-mcp/design_patterns_mcp/dist/src/mcp-server.js"
+      ],
       "env": {
         "LOG_LEVEL": "info",
         "DATABASE_PATH": "/Users/mlosey/fresh-start/fresh-start-mcp/design_patterns_mcp/data/design-patterns.db",
@@ -106,37 +108,46 @@ If Cursor uses a configuration file, create or edit the MCP configuration:
 Once configured, you can use these tools in Cursor:
 
 ### 1. `find_patterns`
+
 Find design patterns using natural language descriptions.
 
 **Example Usage:**
+
 - "I need to create complex objects with many optional configurations"
 - "How can I notify multiple components when data changes?"
 - "What pattern helps with distributed system resilience?"
 
 **Parameters:**
+
 - `query` (required): Natural language description of the problem
 - `categories` (optional): Array of pattern categories to search in
 - `maxResults` (optional): Maximum number of recommendations (default: 5)
 - `programmingLanguage` (optional): Target programming language
 
 ### 2. `search_patterns`
+
 Search patterns by keyword or semantic similarity.
 
 **Parameters:**
+
 - `query` (required): Search query
 - `searchType` (optional): "keyword", "semantic", or "hybrid" (default: "hybrid")
 - `limit` (optional): Maximum results (default: 10)
 
 ### 3. `get_pattern_details`
+
 Get comprehensive information about a specific pattern.
 
 **Parameters:**
+
 - `patternId` (required): Pattern ID to get details for
 
 ### 4. `count_patterns`
+
 Get statistics about available patterns.
 
 **Parameters:**
+
 - `includeDetails` (optional): Include breakdown by category (default: false)
 
 ## 🛠️ Development Commands
@@ -167,17 +178,20 @@ npm run typecheck      # Check TypeScript types
 ### Server Won't Start
 
 1. **Check Node.js version**: Ensure you have Node.js >= 18.0.0
+
    ```bash
    node --version
    ```
 
 2. **Verify build**: Make sure the project is built
+
    ```bash
    npm run build
    ls -la dist/src/mcp-server.js
    ```
 
 3. **Check database**: Ensure database exists
+
    ```bash
    ls -la data/design-patterns.db
    ```
@@ -201,6 +215,7 @@ npm run typecheck      # Check TypeScript types
 ### Database Issues
 
 1. **Reset database**: Remove and recreate
+
    ```bash
    rm data/design-patterns.db
    npm run migrate
