@@ -98,3 +98,8 @@ migrations/*.sql
 
 # AI Assistant specific exclusions
 AI-ASSISTANT-CONSISTENCY-IMPLEMENTATION-GUIDE.md
+
+# Context7 MCP specific exclusions
+context7-test-results/
+context7-cache/
+context7-documentation-cache/
