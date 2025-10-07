@@ -1,0 +1,15 @@
+This is a test file to verify the consistency patterns implementation.
+
+Created: $(date)
+Purpose: Testing git workflow consistency
+Project: Design Patterns MCP
+
+The AI assistant should follow this workflow:
+1. Create this file
+2. Run pwd to verify location
+3. Run git status to check state
+4. Run git add . to stage changes
+5. Run git commit with descriptive message
+6. Run git push origin main to push
+
+This tests the core behavioral patterns for consistent AI assistance.

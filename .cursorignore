@@ -1,0 +1,100 @@
+# AI Assistant Indexing Control for Design Patterns MCP Project
+# Prevents semantic poisoning and ensures consistent rule application
+
+# Research and experimental content (EXCLUDE)
+workspace/scenarios/one-off/
+backstage/workspace/idea-box/
+research/
+experimental/
+draft/
+wip/
+
+# Draft and experimental files (EXCLUDE)
+*.draft.md
+*.draft.feature
+*.experimental.*
+*.wip.*
+*.test.*
+*.tmp.*
+
+# Generated content (EXCLUDE)
+*.generated.*
+validation-runs/
+test-results/
+pattern-experiments/
+experimental-sops/
+
+# Temporary files (EXCLUDE)
+*.tmp
+*.cache
+*.log
+*.swp
+*.swo
+
+# Build outputs (EXCLUDE)
+dist/
+build/
+out/
+target/
+bin/
+lib/
+
+# Dependencies (EXCLUDE)
+node_modules/
+vendor/
+.pnpm-store/
+venv/
+env/
+
+# IDE files (EXCLUDE)
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files (EXCLUDE)
+.DS_Store
+Thumbs.db
+
+# Project-specific patterns for Design Patterns MCP
+
+# Database files (EXCLUDE - these are large and auto-generated)
+data/design-patterns.db
+data/patterns/*.json
+
+# Test coverage and reports (EXCLUDE)
+coverage/
+.nyc_output/
+test-results/
+*.lcov
+
+# TypeScript build artifacts (EXCLUDE)
+*.js.map
+*.d.ts.map
+
+# Package manager files (EXCLUDE)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Environment and config files (EXCLUDE - may contain secrets)
+.env
+.env.local
+.env.*.local
+config/local.*
+
+# Migration files (EXCLUDE - these are historical and shouldn't be modified)
+migrations/*.sql
+
+# Large data files (EXCLUDE)
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files (EXCLUDE)
+*.bak
+*.backup
+*~
+
+# AI Assistant specific exclusions
+AI-ASSISTANT-CONSISTENCY-IMPLEMENTATION-GUIDE.md

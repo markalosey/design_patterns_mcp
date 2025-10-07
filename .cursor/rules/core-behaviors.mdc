@@ -1,0 +1,83 @@
+---
+description: Core Behavioral Patterns for Design Patterns MCP AI Assistant
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# Core Behavioral Patterns for Design Patterns MCP
+
+## File Operations
+
+When creating or modifying files, always follow this git workflow:
+
+1. Run `pwd` to verify current location
+2. Run `git status` to check repository state
+3. Run `git add .` to stage all changes
+4. Run `git commit -m "descriptive message"` to commit immediately
+5. Run `git push origin main` to push to remote
+
+## Complex Analysis
+
+When analyzing complex problems or planning, always use sequential thinking first:
+
+1. Use `mcp_sequential-thinking_sequentialthinking` tool
+2. Structure reasoning process with clear thoughts
+3. Revise previous thoughts as understanding deepens
+4. Test hypotheses before concluding
+
+## Quality Assurance
+
+When making changes:
+
+- Always verify the current working directory
+- Check git status before making changes
+- Use descriptive commit messages
+- Push changes immediately after committing
+
+## MCP-Specific Behaviors
+
+When working with this Design Patterns MCP project:
+
+### Pattern Development
+- Always maintain consistency with existing pattern structure in `data/patterns/`
+- Follow the established TypeScript patterns in `src/`
+- Ensure new patterns include proper metadata and examples
+
+### Database Operations
+- Be cautious with database files (`data/design-patterns.db`)
+- Use migration files in `migrations/` for schema changes
+- Test database operations thoroughly
+
+### Service Architecture
+- Follow the established adapter pattern in `src/adapters/`
+- Maintain consistency with factory patterns in `src/factories/`
+- Use the facade pattern appropriately in `src/facades/`
+
+### Testing
+- Ensure all new functionality has corresponding tests in `tests/`
+- Follow the existing test structure (contract, integration, performance)
+- Maintain test coverage for critical functionality
+
+### Code Quality
+- Follow TypeScript best practices
+- Maintain consistent error handling patterns
+- Use proper logging through the established logger service
+- Ensure proper type definitions in `src/types/`
+
+## Error Handling
+
+When encountering errors:
+
+1. Check the error handler service in `src/services/error-handler.ts`
+2. Use proper logging through `src/services/logger.ts`
+3. Follow established error patterns in the codebase
+4. Ensure errors are properly typed and documented
+
+## Performance Considerations
+
+When making changes that could affect performance:
+
+1. Consider the performance monitor in `src/services/performance-monitor.ts`
+2. Test with the performance test suite in `tests/performance/`
+3. Monitor vector operations and embedding generation
+4. Ensure database queries are optimized
