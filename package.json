@@ -47,7 +47,7 @@
     "db:setup": "npm run migrate && npm run seed && npm run generate-embeddings",
     "migrate": "node dist/src/db/init.js migrate",
     "seed": "node dist/src/db/init.js seed",
-    "generate-embeddings": "node dist/src/generate-embeddings.js"
+    "generate-embeddings": "node dist/src/cli/generate-embeddings.js"
   },
   "repository": {
     "type": "git",
